@@ -23,8 +23,10 @@
             <select id="from" onchange="updateToOptions()">
                 <option value="m">Metros</option>
                 <option value="ft">Pies</option>
+                <option value="in">Pulgadas</option>
                 <option value="km">Kilómetros</option>
                 <option value="mi">Millas</option>
+                <option value="cm">Centímetros</option>
                 <option value="kg">Kilogramos</option>
                 <option value="lb">Libras</option>
                 <option value="g">Gramos</option>
@@ -41,9 +43,9 @@
             <h3>Tabla de Equivalencias</h3>
             <table>
                 <tr><th>Unidad</th><th>Equivalencia</th></tr>
-                <tr><td>1 metro</td><td>3.28084 pies</td></tr>
-                <tr><td>1 kilómetro</td><td>0.621371 millas</td></tr>
-                <tr><td>1 kilogramo</td><td>2.20462 libras</td></tr>
+                <tr><td>1 metro</td><td>100 cm, 3.28084 pies, 39.3701 pulgadas</td></tr>
+                <tr><td>1 kilómetro</td><td>1000 metros, 0.621371 millas</td></tr>
+                <tr><td>1 kilogramo</td><td>1000 gramos, 2.20462 libras</td></tr>
                 <tr><td>1 gramo</td><td>0.035274 onzas</td></tr>
                 <tr><td>0°C</td><td>32°F</td></tr>
             </table>
@@ -51,11 +53,18 @@
     </div>
     <script>
         const validConversions = {
-            "m": ["ft"], "ft": ["m"],
-            "km": ["mi"], "mi": ["km"],
-            "kg": ["lb"], "lb": ["kg"],
-            "g": ["oz"], "oz": ["g"],
-            "c": ["f"], "f": ["c"]
+            "m": ["km", "cm", "ft", "in"],
+            "km": ["m", "mi"],
+            "cm": ["m", "in"],
+            "ft": ["m", "in"],
+            "in": ["cm", "ft", "m"],
+            "mi": ["km"],
+            "kg": ["g", "lb"],
+            "g": ["kg", "oz"],
+            "lb": ["kg"],
+            "oz": ["g"],
+            "c": ["f"],
+            "f": ["c"]
         };
         
         function updateToOptions() {
@@ -76,8 +85,14 @@
             let to = document.getElementById('to').value;
             
             let conversionFactors = {
+                "m_km": 0.001, "km_m": 1000,
+                "m_cm": 100, "cm_m": 0.01,
                 "m_ft": 3.28084, "ft_m": 0.3048,
+                "m_in": 39.3701, "in_m": 0.0254,
+                "cm_in": 0.393701, "in_cm": 2.54,
+                "ft_in": 12, "in_ft": 0.0833333,
                 "km_mi": 0.621371, "mi_km": 1.60934,
+                "kg_g": 1000, "g_kg": 0.001,
                 "kg_lb": 2.20462, "lb_kg": 0.453592,
                 "g_oz": 0.035274, "oz_g": 28.3495,
                 "c_f": (c) => (c * 9/5) + 32,
