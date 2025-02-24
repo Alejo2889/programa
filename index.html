@@ -5,36 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conversor de Unidades</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; display: flex; justify-content: center; }
+        .container { display: flex; }
+        .converter, .table-container { margin: 20px; }
         input, select, button { margin: 10px; padding: 10px; }
+        table { border-collapse: collapse; width: 300px; }
+        th, td { border: 1px solid black; padding: 8px; text-align: left; }
     </style>
 </head>
 <body>
-    <h2>Conversor de Unidades</h2>
-    <label for="value">Valor:</label>
-    <input type="number" id="value" placeholder="Ingrese valor">
-    <label for="from">De:</label>
-    <select id="from">
-        <option value="m">Metros</option>
-        <option value="ft">Pies</option>
-        <option value="kg">Kilogramos</option>
-        <option value="lb">Libras</option>
-        <option value="c">Celsius</option>
-        <option value="f">Fahrenheit</option>
-    </select>
-    <label for="to">A:</label>
-    <select id="to">
-        <option value="m">Metros</option>
-        <option value="ft">Pies</option>
-        <option value="kg">Kilogramos</option>
-        <option value="lb">Libras</option>
-        <option value="c">Celsius</option>
-        <option value="f">Fahrenheit</option>
-    </select>
-    <button onclick="convert()">Convertir</button>
-    <h3 id="result"></h3>
-
+    <div class="container">
+        <div class="converter">
+            <h2>Conversor de Unidades</h2>
+            <label for="value">Valor:</label>
+            <input type="number" id="value" placeholder="Ingrese valor">
+            <label for="from">De:</label>
+            <select id="from" onchange="updateToOptions()">
+                <option value="m">Metros</option>
+                <option value="ft">Pies</option>
+                <option value="km">Kilómetros</option>
+                <option value="mi">Millas</option>
+                <option value="kg">Kilogramos</option>
+                <option value="lb">Libras</option>
+                <option value="g">Gramos</option>
+                <option value="oz">Onzas</option>
+                <option value="c">Celsius</option>
+                <option value="f">Fahrenheit</option>
+            </select>
+            <label for="to">A:</label>
+            <select id="to"></select>
+            <button onclick="convert()">Convertir</button>
+            <h3 id="result"></h3>
+        </div>
+        <div class="table-container">
+            <h3>Tabla de Equivalencias</h3>
+            <table>
+                <tr><th>Unidad</th><th>Equivalencia</th></tr>
+                <tr><td>1 metro</td><td>3.28084 pies</td></tr>
+                <tr><td>1 kilómetro</td><td>0.621371 millas</td></tr>
+                <tr><td>1 kilogramo</td><td>2.20462 libras</td></tr>
+                <tr><td>1 gramo</td><td>0.035274 onzas</td></tr>
+                <tr><td>0°C</td><td>32°F</td></tr>
+            </table>
+        </div>
+    </div>
     <script>
+        const validConversions = {
+            "m": ["ft"], "ft": ["m"],
+            "km": ["mi"], "mi": ["km"],
+            "kg": ["lb"], "lb": ["kg"],
+            "g": ["oz"], "oz": ["g"],
+            "c": ["f"], "f": ["c"]
+        };
+        
+        function updateToOptions() {
+            let from = document.getElementById("from").value;
+            let toSelect = document.getElementById("to");
+            toSelect.innerHTML = "";
+            validConversions[from].forEach(unit => {
+                let option = document.createElement("option");
+                option.value = unit;
+                option.textContent = unit;
+                toSelect.appendChild(option);
+            });
+        }
+        
         function convert() {
             let value = parseFloat(document.getElementById('value').value);
             let from = document.getElementById('from').value;
@@ -42,7 +77,9 @@
             
             let conversionFactors = {
                 "m_ft": 3.28084, "ft_m": 0.3048,
+                "km_mi": 0.621371, "mi_km": 1.60934,
                 "kg_lb": 2.20462, "lb_kg": 0.453592,
+                "g_oz": 0.035274, "oz_g": 28.3495,
                 "c_f": (c) => (c * 9/5) + 32,
                 "f_c": (f) => (f - 32) * 5/9
             };
@@ -57,6 +94,8 @@
                 document.getElementById('result').innerText = "Conversión no soportada";
             }
         }
+        
+        updateToOptions(); // Inicializa el select "to" al cargar la página
     </script>
 </body>
 </html>
